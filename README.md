@@ -28,10 +28,10 @@ To run the website locally:
 
 3. Navigate to the directory containing Alpha Blog's yaml file and 
 run the command dev_appserver.py ./
-```
-> cd my_path/.../alpha-blog
-> dev_appserver.py ./
-```
+  ```
+  > cd my_path/.../alpha-blog
+  > dev_appserver.py ./
+  ```
 
 4. Open your browser and navigate to http://localhost:8080
 
