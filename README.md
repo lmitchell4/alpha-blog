@@ -21,14 +21,18 @@ ratings, and comments, are stored using the
 [Google Datastore NDB Client Library](https://cloud.google.com/appengine/docs/python/ndb/). 
 
 To run the website locally:
+
 1. Fork or download the code from GitHub
+
 2. Download and install [Google App Engine SDK](https://cloud.google.com/appengine/docs/python/download) 
+
 3. Navigate to the directory containing Alpha Blog's yaml file and 
 run the command dev_appserver.py ./
 ```
 > cd my_path/.../alpha-blog
 > dev_appserver.py ./
 ```
+
 4. Open your browser and navigate to http://localhost:8080
 
 Alpha Blog was designed to be run on the Google Cloud Platform. See 
