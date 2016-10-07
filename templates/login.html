@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 text-left title-super">
+            <h2>Login</h2>
+        </div>
+    </div>
+
+    <form method="post">
+        <div class="row">
+            <div class="col-md-3 col-sm-3 text-right">
+                <h3 class="valign">Username</h3>
+            </div>
+            <div class="col-md-9 col-sm-9">
+                <input type="text" name="username" class="ibig" value="{{ username }}">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 col-sm-3 text-right">
+                <h3 class="valign">Password</h3>
+            </div>
+            <div class="col-md-9 col-sm-9">
+                <input type="password" name="password" class="ibig">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 col-sm-3 text-left"></div>
+            <div class="col-md-9 col-sm-9 text-left">
+                <h3 class="login-error">{{ invalid_error }}</h3>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 col-sm-3">
+            </div>
+            <div class="col-md-9 col-sm-9">
+                <input type="submit" name="login" class="ibig" value="Login">
+            </div>
+        </div>
+    </form>
+
+    <div class="vspace-40"></div>
+
+    <div class="row">
+        <div class="col-md-9 col-sm-9">
+            <h2>Don't have an account yet?</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <a href="/signup" class="no-dec">
+                <input type="button" class="ibig" value="Signup">
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <!-- Bootstrap Navigation Bar -->
+    <nav class="navbar navbar-default" id="blog-nav">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#blog-menu" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="blog-menu">
+                <ul class="nav navbar-nav">
+                    <li class="navbar-brand">{{ author }}</li>
+                </ul>
+
+                <form class="navbar-form navbar-left" method="POST">
+                    <input type="hidden" name="author" value="{{ entry['author'] }}">
+                    <input type="hidden" name="id" value="{{ entry['post_id'] }}">
+                    <div class="form-group">
+                        <a href="/blog?author={{ entry['author'] }}" role="button" class="form-control no-dec">Home</a>
+                    </div>
+                </form>
+
+                <form class="navbar-form navbar-right" method="POST">
+                    <input type="hidden" name="author" value="{{ entry['author'] }}">
+                    <input type="hidden" name="id" value="{{ entry['post_id'] }}">
+                    <div class="form-group">
+                        <input type="submit" name="changepost" value="Edit" class="form-control rspace">
+                        <input type="submit" name="changepost" value="Delete" class="form-control">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    {% if post_error %}
+        <div class="row">
+            <div class="col-xs-12 text-center">
+                <h5 class="error">{{ post_error }}</h5>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-10 text-left">
+            <h3>{{ entry["subject"] }}</h3>
+        </div>
+        <div class="col-xs-12 col-sm-2 text-left">
+            <h3 class="entry-date">{{ entry["created"] }}</h3>
+        </div>
+    </div>
+
+    <hr class="intra-line">
+
+    <div class="row">
+        <div class="col-xs-12 text-left">
+            <p>{{ entry["content"] }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-3 text-left rating-div">
+            <p id="like-{{ entry['post_id'] }}" class="rating {{ entry['like'] }}">
+                Like:
+            </p>
+            <p class="rspace">{{ entry["likes"] }}</p>
+            <p id="dislike-{{ entry['post_id'] }}" class="rating {{ entry['dislike'] }}">
+                Dislike:
+            </p>
+            <p>{{ entry["dislikes"] }}</p>
+        </div>
+
+        <div class="col-xs-12 col-sm-5 text-left">
+            <h5 id="error-{{ entry['post_id'] }}" class="error flush"></h5>
+        </div>
+    </div>
+
+    <hr class="comment-hr">
+
+    <div class="row">
+        <div class="col-xs-12 text-left rating-div">
+            <h3>Comments:</h3>
+        </div>
+    </div>
+
+    {% for comment in comments %}
+        <form method="post">
+            <input type="hidden" name="comment_id" value="{{ comment['comment_id'] }}">
+            <input type="hidden" name="author" value="{{ entry['author'] }}">
+            <input type="hidden" name="id" value="{{ entry['post_id'] }}">
+
+            <div class="row">
+                <div class="col-xs-12 text-left">
+                    {{ comment["commenter"] }}:
+                </div>
+            </div>
+
+            {% if comment["comment_id"] == update_target and not update_comment_error %}
+                <!-- Open comment for editing. -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <textarea name="comment-content">{{ comment["content"] }}</textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3">
+                        <input type="submit" name="updatecomment" value="Save" class="comment-btn rspace">
+                        <input type="submit" name="updatecomment" value="Cancel" class="comment-btn">
+
+                        <div class="col-xs-12 col-sm-9 text-left">
+                            {% if comment["comment_id"] == update_target and update_comment_error %}
+                                <h5 class="error flush">{{ update_comment_error }}</h5>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Displaying comment. -->
+                <div class="row">
+                    <div class="col-xs-0 col-sm-1">
+                    </div>
+                    <div class="col-xs-12 col-sm-11 text-left">
+                        {{ comment["content"] }}
+                    </div>
+                </div>
+
+                <div class="vspace-20"></div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3">
+                        <input type="submit" name="updatecomment" class="comment-btn rspace" value="Edit">
+                        <input type="submit" name="updatecomment" class="comment-btn" value="Delete">
+                    </div>
+                    <div class="col-xs-12 col-sm-9 text-left">
+                        {% if comment["comment_id"] == update_target and update_comment_error %}
+                            <h5 class="error flush">{{ update_comment_error }}</h5>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </form>
+        <hr class="comment-hr">
+    {% endfor %}
+
+    <form method="post" class="inline">
+        <input type="hidden" name="author" value="{{ entry['author'] }}">
+        <input type="hidden" name="id" value="{{ entry['post_id'] }}">
+
+        {% if get_new_comment %}
+            <div class="row">
+                <div class="col-xs-12 text-left">
+                    <h4>New Comment:</h4>
+                 </div>
+            </div>
+            {% if new_comment_error %}
+                <div class="row">
+                    <div class="col-xs-12 text-left">
+                        <h5 class="error">{{ new_comment_error }}</h5>
+                    </div>
+                </div>
+            {% endif %}
+                <div class="row">
+                    <div class="col-xs-12">
+                        <textarea name="comment-content"></textarea>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="submit" name="newcomment" value="Save" class="comment-btn rspace">
+                        <input type="submit" name="newcomment" value="Cancel" class="comment-btn">
+                    </div>
+                </div>
+        {% else %}
+            <div class="row">
+                <div class="col-xs-12 col-sm-3">
+                    <input type="submit" name="newcomment" value="Add Comment" class="comment-btn">
+                </div>
+                <div class="col-xs-12 col-sm-5 text-left">
+                    {% if new_comment_error %}
+                        <div class="col-xs-12 text-left">
+                            <h5 class="error flush">{{ new_comment_error }}</h5>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,204 @@
+
+img, embed, object, video {
+    max-width: 100%;
+}
+
+
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    margin: 0 auto;
+    padding: 10px;
+    padding-top: 0;
+    padding-bottom: 30px;
+    color: #333;
+}
+
+/* ------------------------ General ------------------------ */
+
+.blue {
+    color: #0078ff;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.inline {
+    display: inline;
+}
+
+.error {
+    color: red;
+}
+
+.vspace {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.vspace-20 {
+    display: block;
+    height: 20px;
+}
+
+.vspace-40 {
+    display: block;
+    height: 40px;
+}
+
+.rspace {
+    margin-right: 20px;
+}
+
+input.ibig {
+    margin-right: 10px;
+}
+
+input.ibig[type=submit] {
+    font-size: 24px;
+}
+
+input.ibig[type=button] {
+    font-size: 24px;
+    display: inline;
+}
+
+input.ibig[type=text] {
+    width: 300px;
+    font-size: 20px;
+    padding: 2px;
+    font-family: monospace;
+}
+
+input.ibig[type=password] {
+    width: 300px;
+    font-size: 20px;
+    padding: 2px;
+}
+
+input.imed[type=submit] {
+    font-size: 18px;
+}
+
+input.imed[type=button] {
+    font-size: 18px;
+    display: inline;
+}
+
+a {
+    color: #000;
+    text-decoration: none;
+}
+
+a.no-dec:hover {
+    color: #000;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #0078ff;
+    text-decoration: none;
+}
+
+textarea {
+    width: 600px;
+    height: 150px;
+}
+
+hr {
+    border-color: #b8b5b5;
+}
+
+/* ------------------------ End General ------------------------ */
+
+
+/* -------------------- Login and Signup -------------------- */
+
+.valign {
+    margin-top: 4px;
+}
+
+.login-error {
+    display: block;
+    color: red;
+    margin: 20px auto;
+}
+
+.signup-error {
+    /* display: inline; */
+    color: red;
+    margin-top: 0;
+    margin-bottom: 15px;
+    /* margin: 20px auto; */
+    /* text-align: left; */
+}
+
+.username {
+    font-size: 18px;
+}
+
+/* ------------------- End Login and Signup ------------------- */
+
+
+/* --------------------- Individual Post Pages --------------------- */
+
+#blog-nav {
+    margin-bottom: 0;
+}
+
+.rating-div {
+    margin-top: 20px;
+}
+
+.rating-div > p {
+    display: inline;
+}
+
+.like {
+    color: #0078ff;
+}
+
+.dislike {
+    color: #ff0000;
+}
+
+.comment-btn {
+    margin-top: 10px;
+}
+
+.comment-hr {
+    margin-top: 1px;
+}
+
+.flush {
+    margin-bottom: 0;
+    margin-top: 20px;
+}
+
+.entry-date {
+    color: #999;
+    font-size: 15px;
+    line-height: 26.4px;
+}
+
+hr.intra-line {
+    margin-top: 0;
+    margin-bottom: 10px;
+    border-color: #000;
+    border-top-width: 3px;
+}
+
+hr.inter-line {
+    margin-top: 0;
+}
+
+#subject {
+    width: 400px;
+}
+
+p.rating:hover {
+    cursor: pointer;
+}
+
+/* ------------------- End Individual Post Pages ------------------- */

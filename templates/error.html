@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="vspace-40"></div>
+
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <h2>You are currently logged in as:</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <h2><a href="/blog?author={{ account }}" class="dec">{{ account }}</a></h2>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
