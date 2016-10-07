@@ -6,7 +6,7 @@ Alpha Blog is a blogging website that features basic blogging
 capabilities - including creating, editing, and deleting blog posts - 
 and allows users to comment on and rate posts.
 
-Click [here](https://alpha-blog-1.appspot.com/) to see a live example 
+Click [here](https://alpha-blog-0.appspot.com/) to see a live example 
 of the site.
 
 
