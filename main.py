@@ -14,6 +14,8 @@ DeleteHandler - Handler for deleting an existing blog post.
 NewCommentHandler - Handler for new comments.
 UpdateCommentHandler - Handler for editing existing comments.
 RateHandler - Handler for the Like and Dislike buttons.
+
+This project is based on code developed by Udacity.
 """
 
 import os
