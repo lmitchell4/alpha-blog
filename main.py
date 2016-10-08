@@ -1,10 +1,11 @@
 
 """ Module classes:
 BaseHandler - Handler for rendering templates and manipulating Cookies.
+
 SignupHandler - Handler for the signup page.
 LoginHandler - Handler for the login page.
 LogoutHandler - Handler for logging out.
-WelcomeHandler - Handler for a welcome page.
+
 MainHandler - Handler for the web site home page.
 BlogHandler - Handler for a user's home page.
 NewPostHandler - Handler for creating a new blog post.
@@ -25,8 +26,12 @@ import time
 import webapp2
 import jinja2
 
-import datastore
-import inputcheck
+from user import UserAccount
+from post import BlogEntry
+from comment import Comment
+from rating import Rating
+
+import validate
 
 ##############################################################################
 ## Define jinja2 templates:
@@ -55,7 +60,7 @@ class BaseHandler(webapp2.RequestHandler):
 
     def set_secure_cookie(self, name, val):
         # Generic version.
-        secure_cookie_val = inputcheck.make_secure_val(val)
+        secure_cookie_val = validate.make_secure_val(val)
         self.response.headers.add_header(
             "Set-Cookie",
             "%s=%s; Path=/" % (name, secure_cookie_val)
@@ -68,7 +73,7 @@ class BaseHandler(webapp2.RequestHandler):
     def read_secure_cookie(self, name):
         secure_cookie_val = self.request.cookies.get(name)
         if secure_cookie_val:
-            return inputcheck.check_secure_val(secure_cookie_val)
+            return validate.check_secure_val(secure_cookie_val)
         else:
             return None
 
@@ -82,7 +87,7 @@ class BaseHandler(webapp2.RequestHandler):
         # found in the datastore.
         webapp2.RequestHandler.initialize(self, *a, **kw)
         uid = self.read_secure_cookie("user_id")
-        self.user = uid and datastore.UserAccount.by_id(int(uid))
+        self.user = uid and UserAccount.by_id(int(uid))
 
         self.account = None
         if self.user:
@@ -140,12 +145,12 @@ class SignupHandler(BaseHandler):
                             email = self.email)
 
         # Check username:
-        if not inputcheck.valid_username(self.username):
+        if not validate.valid_username(self.username):
             display_data["username_error"] = "That's not a valid username."
             form_ok = False
 
         # Check password:
-        if not inputcheck.valid_password(self.password):
+        if not validate.valid_password(self.password):
             display_data["password_error"] = "That's not a valid password."
             form_ok = False
         elif self.password != self.verify:
@@ -154,7 +159,7 @@ class SignupHandler(BaseHandler):
 
         # Only check email if there is an email:
         if self.email != "":
-            if not inputcheck.valid_email(self.email):
+            if not validate.valid_email(self.email):
                 display_data["email_error"] = "That's not a valid email."
                 form_ok = False
 
@@ -165,7 +170,7 @@ class SignupHandler(BaseHandler):
             self.render("signup.html", **display_data)
 
     def done(self, display_data):
-        user = datastore.UserAccount.by_username(self.username)
+        user = UserAccount.by_username(self.username)
 
         if user:
             display_data["username_error"] = "That user already exists."
@@ -173,7 +178,7 @@ class SignupHandler(BaseHandler):
         else:
             # Create new datastore entity, set secure Cookie for this
             # user, and redirect to the user's home page.
-            user = datastore.UserAccount.create(self.username,
+            user = UserAccount.create(self.username,
                                                  self.password,
                                                  self.email)
             self.set_secure_userid_cookie(user)
@@ -195,7 +200,7 @@ class LoginHandler(BaseHandler):
         password = self.request.get("password").strip()
 
         # Check login credentials:
-        user = datastore.UserAccount.login(username, password)
+        user = UserAccount.login(username, password)
 
         if user:
             # Set the secure Cookie for this user and redirect to
@@ -236,7 +241,7 @@ class MainHandler(BaseHandler):
     """Handler for the web site home page."""
 
     def get(self):
-        all_users = datastore.UserAccount.get_all_usernames()
+        all_users = UserAccount.get_all_usernames()
         if all_users:
             self.render("index.html",
                         account=self.account,
@@ -254,11 +259,11 @@ class BlogHandler(BaseHandler):
     """
 
     def render_main(self, error_msg=""):
-        blog_entries = datastore.BlogEntry.first_ten_list(self.author)
+        blog_entries = BlogEntry.first_ten_list(self.author)
 
         # Get all rating information for this user and author:
         if blog_entries and self.logged_in():
-            blog_entries = datastore.BlogEntry.add_ratings(
+            blog_entries = BlogEntry.add_ratings(
                 entries=blog_entries,
                 username=self.account)
 
@@ -302,7 +307,7 @@ class NewPostHandler(BaseHandler):
             content = self.request.get("content").strip()
 
             if subject and content:
-                new_entry = datastore.BlogEntry.create(
+                new_entry = BlogEntry.create(
                     author=self.account,
                     subject=subject,
                     content=content)
@@ -328,10 +333,10 @@ class PostHandler(BaseHandler):
     def render_main(self, post_id, post_error="", get_new_comment = False,
                     new_comment_error="", update_target="",
                     update_comment_error=""):
-        entry = datastore.BlogEntry.dict_by_id(int(post_id))
-        comments = datastore.Comment.by_postid_dict(post_id)
+        entry = BlogEntry.dict_by_id(int(post_id))
+        comments = Comment.by_postid_dict(post_id)
 
-        entry = datastore.BlogEntry.add_ratings(entries = [entry],
+        entry = BlogEntry.add_ratings(entries = [entry],
                                                  username = self.account)
         entry = entry[0]
 
@@ -390,7 +395,7 @@ class PostHandler(BaseHandler):
         action = self.request.get("updatecomment")
         if action:
             comment_id = self.request.get("comment_id")
-            comment = datastore.Comment.by_id(int(comment_id))
+            comment = Comment.by_id(int(comment_id))
 
             if comment.commenter == self.account:
                 self.update_comment(post_id, author, comment_id, action)
@@ -406,7 +411,7 @@ class PostHandler(BaseHandler):
 
         if comment_content:
             # use author from the get parameters or from self.author?
-            record = datastore.Comment.create(
+            record = Comment.create(
                 post_id=post_id,
                 author=author,
                 commenter=self.account,
@@ -425,14 +430,14 @@ class PostHandler(BaseHandler):
 
         elif action == "Delete":
             # Delete from Comment datastore.
-            datastore.Comment.delete_by_id(int(comment_id))
+            Comment.delete_by_id(int(comment_id))
             time.sleep(0.1) # for now
             self.redirect("/blog/post?author=%s&id=%s" % (author, post_id))
 
         elif action == "Save":
             new_content = self.request.get("comment-content").strip()
             if new_content:
-                datastore.Comment.update(int(comment_id), new_content)
+                Comment.update(int(comment_id), new_content)
                 time.sleep(0.1) # for now
                 self.redirect("/blog/post?author=%s&id=%s" % (author, post_id))
             else:
@@ -449,7 +454,7 @@ class EditHandler(BaseHandler):
     """Handler for editing an existing blog post."""
 
     def render_main(self, post_id, error=""):
-        entry = datastore.BlogEntry.dict_by_id(int(post_id))
+        entry = BlogEntry.dict_by_id(int(post_id))
         self.render("editpost.html",
                     account=self.account,
                     author=self.account,
@@ -469,7 +474,7 @@ class EditHandler(BaseHandler):
 
             if new_content:
                 post_id = self.request.get("id")
-                datastore.BlogEntry.update_by_id(
+                BlogEntry.update_by_id(
                     int(post_id),
                     new_subject, new_content)
                 self.redirect("/blog/post?author=%s&id=%s" %
@@ -500,11 +505,11 @@ class DeleteHandler(BaseHandler):
         if self.user_and_author():
             # Delete the post and any associated comments.
             post_id = self.request.get("id")
-            blog_entry = datastore.BlogEntry.get_by_id(int(post_id))
+            blog_entry = BlogEntry.get_by_id(int(post_id))
             post_subject = blog_entry.subject
 
-            datastore.BlogEntry.delete_by_id(int(post_id))
-            datastore.Comment.delete_all_by_postid(post_id)
+            BlogEntry.delete_by_id(int(post_id))
+            Comment.delete_all_by_postid(post_id)
 
             self.render_main(post_subject = post_subject)
 
@@ -513,8 +518,8 @@ class NewCommentHandler(BaseHandler):
     """Handler for new comments."""
 
     def render_main(self, post_id, get_new_comment=False, error=""):
-        entry = datastore.BlogEntry.dict_by_id(int(post_id))
-        comments = datastore.Comment.by_postid_dict(post_id)
+        entry = BlogEntry.dict_by_id(int(post_id))
+        comments = Comment.by_postid_dict(post_id)
 
         self.render("post.html",
                     account=self.account,
@@ -545,7 +550,7 @@ class NewCommentHandler(BaseHandler):
         comment_content = self.request.get("comment-content").strip()
 
         if comment_content:
-            record = datastore.Comment.create(
+            record = Comment.create(
                 post_id=post_id,
                 author=author,
                 commenter=self.account,
@@ -561,8 +566,8 @@ class UpdateCommentHandler(BaseHandler):
     """Handler for editing existing comments."""
 
     def render_main(self, post_id, target="", error=""):
-        entry = datastore.BlogEntry.dict_by_id(int(post_id))
-        comments = datastore.Comment.by_postid_dict(post_id)
+        entry = BlogEntry.dict_by_id(int(post_id))
+        comments = Comment.by_postid_dict(post_id)
 
         self.render("post.html",
                     account=self.account,
@@ -587,7 +592,7 @@ class UpdateCommentHandler(BaseHandler):
         action = self.requst.get("action")
 
         comment_id = self.request.get("comment_id")
-        comment = datastore.Comment.by_id(int(comment_id))
+        comment = Comment.by_id(int(comment_id))
         commenter = comment.commenter
 
         if commenter == self.account:
@@ -596,14 +601,14 @@ class UpdateCommentHandler(BaseHandler):
 
             elif action == "Delete":
                 # Delete from Comment datastore.
-                datastore.Comment.delete_by_id(int(comment_id))
+                Comment.delete_by_id(int(comment_id))
                 time.sleep(0.1) # for now
                 self.redirect("/blog/post?author=%s&id=%s" % (author, post_id))
 
             elif action == "Save":
                 new_content = self.request.get("comment-content").strip()
                 if new_content:
-                    datastore.Comment.update(int(comment_id), new_content)
+                    Comment.update(int(comment_id), new_content)
                     time.sleep(0.1) # for now
                     self.redirect("/blog/post?author=%s&id=%s" %
                                  (author, post_id))
@@ -633,7 +638,7 @@ class RateHandler(BaseHandler):
             tmp = data.split("-")
             rating = tmp[0]
             post_id = tmp[1]
-            entry = datastore.BlogEntry.by_id(int(post_id))
+            entry = BlogEntry.by_id(int(post_id))
 
             if not entry:
                 return
@@ -642,7 +647,7 @@ class RateHandler(BaseHandler):
             if self.logged_in():
                 if self.account != entry.author:
                     # Check to see if this user has already rated it.
-                    record = datastore.UserRating.by_username_and_postid(
+                    record = Rating.by_username_and_postid(
                         username=self.account,
                         post_id=post_id)
 
@@ -651,13 +656,13 @@ class RateHandler(BaseHandler):
                         return
                     else:
                         if rating == "like":
-                            new_count = datastore.BlogEntry.increment_like(
+                            new_count = BlogEntry.increment_like(
                                 int(post_id))
                         elif rating == "dislike":
-                            new_count = datastore.BlogEntry.increment_dislike(
+                            new_count = BlogEntry.increment_dislike(
                                 int(post_id))
 
-                        datastore.UserRating.create(
+                        Rating.create(
                             username=self.account,
                             post_id=post_id,
                             post_author=entry.author,
