@@ -22,22 +22,20 @@
                     <li class="navbar-brand">{{ author }}</li>
                 </ul>
 
-                <form class="navbar-form navbar-left" method="POST">
+                <form class="navbar-form navbar-left" method="post">
                     <input type="hidden" name="author" value="{{ entry['author'] }}">
                     <input type="hidden" name="id" value="{{ entry['post_id'] }}">
                     <div class="form-group">
-                        <a href="/blog?author={{ entry['author'] }}" role="button" class="form-control no-dec">Home</a>
+                        <a href="/home/{{ author }}" role="button" class="form-control no-dec">Home</a>
                     </div>
                 </form>
 
-                <form class="navbar-form navbar-right" method="POST">
-                    <input type="hidden" name="author" value="{{ entry['author'] }}">
-                    <input type="hidden" name="id" value="{{ entry['post_id'] }}">
-                    <div class="form-group">
-                        <input type="submit" name="changepost" value="Edit" class="form-control rspace">
-                        <input type="submit" name="changepost" value="Delete" class="form-control">
-                    </div>
-                </form>
+                {% if account == author %}
+                    <form class="navbar-form navbar-right">
+                        <a href="/edit/{{ entry['post_id'] }}" role="button" class="form-control no-dec">Edit</a>
+                        <a href="/delete/{{ entry['post_id'] }}" role="button" class="form-control no-dec">Delete</a>
+                    </form>
+                {% endif %}
             </div>
         </div>
     </nav>
@@ -92,19 +90,17 @@
         </div>
     </div>
 
+    
+    <!-- Existing comment form -->
     {% for comment in comments %}
-        <form method="post">
-            <input type="hidden" name="comment_id" value="{{ comment['comment_id'] }}">
-            <input type="hidden" name="author" value="{{ entry['author'] }}">
-            <input type="hidden" name="id" value="{{ entry['post_id'] }}">
-
+        <form method="post" action="/editcomment/{{ comment['comment_id'] }}">
             <div class="row">
                 <div class="col-xs-12 text-left">
                     {{ comment["commenter"] }}:
                 </div>
             </div>
 
-            {% if comment["comment_id"] == update_target and not update_comment_error %}
+            {% if comment["comment_id"] == edit_comment_target and not edit_comment_error %}
                 <!-- Open comment for editing. -->
                 <div class="row">
                     <div class="col-xs-12">
@@ -112,13 +108,15 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12 col-sm-3">
-                        <input type="submit" name="updatecomment" value="Save" class="comment-btn rspace">
-                        <input type="submit" name="updatecomment" value="Cancel" class="comment-btn">
-
+                    <div class="col-xs-12 col-sm-3">                    
+                        <input type="submit" name="editcomment" class="comment-btn rspace" value="Save">
+                        <a href="/post/{{ entry['post_id'] }}" class="comment-btn no-dec">
+                            <input type="button" value="Cancel">
+                        </a>
+                        
                         <div class="col-xs-12 col-sm-9 text-left">
-                            {% if comment["comment_id"] == update_target and update_comment_error %}
-                                <h5 class="error flush">{{ update_comment_error }}</h5>
+                            {% if comment["comment_id"] == edit_comment_target and edit_comment_error %}
+                                <h5 class="error flush">{{ edit_comment_error }}</h5>
                             {% endif %}
                         </div>
                     </div>
@@ -137,12 +135,16 @@
 
                 <div class="row">
                     <div class="col-xs-12 col-sm-3">
-                        <input type="submit" name="updatecomment" class="comment-btn rspace" value="Edit">
-                        <input type="submit" name="updatecomment" class="comment-btn" value="Delete">
+                        <a href="/editcomment/{{ comment['comment_id'] }}" class="no-dec">
+                            <input type="button" value="Edit">
+                        </a>
+                        <a href="/deletecomment/{{ comment['comment_id'] }}" class="no-dec">
+                            <input type="button" value="Delete">
+                        </a>
                     </div>
                     <div class="col-xs-12 col-sm-9 text-left">
-                        {% if comment["comment_id"] == update_target and update_comment_error %}
-                            <h5 class="error flush">{{ update_comment_error }}</h5>
+                        {% if comment["comment_id"] == edit_comment_target and edit_comment_error %}
+                            <h5 class="error flush">{{ edit_comment_error }}</h5>
                         {% endif %}
                     </div>
                 </div>
@@ -151,10 +153,9 @@
         <hr class="comment-hr">
     {% endfor %}
 
-    <form method="post" class="inline">
-        <input type="hidden" name="author" value="{{ entry['author'] }}">
-        <input type="hidden" name="id" value="{{ entry['post_id'] }}">
-
+    
+    <!-- New comment form -->
+    <form method="post" action="/newcomment/{{ entry['post_id'] }}" class="inline">
         {% if get_new_comment %}
             <div class="row">
                 <div class="col-xs-12 text-left">
@@ -177,13 +178,17 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <input type="submit" name="newcomment" value="Save" class="comment-btn rspace">
-                        <input type="submit" name="newcomment" value="Cancel" class="comment-btn">
+                        <a href="/post/{{ entry['post_id'] }}" class="no-dec">
+                            <input type="button" value="Cancel">
+                        </a>
                     </div>
                 </div>
         {% else %}
             <div class="row">
                 <div class="col-xs-12 col-sm-3">
-                    <input type="submit" name="newcomment" value="Add Comment" class="comment-btn">
+                    <a href="/newcomment/{{ entry['post_id'] }}" class="no-dec">
+                        <input type="button" value="Comment">
+                    </a>
                 </div>
                 <div class="col-xs-12 col-sm-5 text-left">
                     {% if new_comment_error %}

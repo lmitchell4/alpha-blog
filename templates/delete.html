@@ -22,9 +22,9 @@
                     <li class="navbar-brand">{{ author }}</li>
                 </ul>
 
-                <form class="navbar-form navbar-left" method="POST">
+                <form class="navbar-form navbar-left" method="post">
                     <div class="form-group">
-                        <a href="/blog?author={{ author }}" role="button" class="form-control no-dec">Home</a>
+                        <a href="/home/{{ author }}" role="button" class="form-control no-dec">Home</a>
                     </div>
                 </form>
             </div>
@@ -39,7 +39,7 @@
 
     <div class="row">
         <div class="col-xs-12 text-center">
-            <h2>{{ post_subject }}</h2>
+            <h2>{{ subject }}</h2>
         </div>
     </div>
 </div>

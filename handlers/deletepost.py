@@ -15,21 +15,27 @@ class DeletePostHandler(BaseHandler):
        There is currently no option to undo a deletion.
 
     """
-    def render_main(self, post_subject):
+    def render_main(self, author, subject):
         self.render("delete.html",
                     account=self.account,
-                    author=self.author,
-                    post_subject=post_subject)
+                    author=author,
+                    subject=subject)
 
-    def get(self):
+    def get(self, post_id):
+        author = BlogEntry.by_id(int(post_id)).author
+        
         # Make sure the author is the one logged in.
-        if self.user_and_author():
+        if self.user_and_author(author):
             # Delete the post and any associated comments.
-            post_id = self.request.get("id")
             blog_entry = BlogEntry.get_by_id(int(post_id))
-            post_subject = blog_entry.subject
+            subject = blog_entry.subject
 
             BlogEntry.delete_by_id(int(post_id))
             Comment.delete_all_by_postid(post_id)
 
-            self.render_main(post_subject = post_subject)
+            self.render_main(author, subject)
+
+        # else:
+            # # self.response.write(str(post_id))
+            # # self.redirect("/post/%s" % str(post_id))
+            # self.redirect("/post/%s" % str(post_id))

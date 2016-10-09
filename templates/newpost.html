@@ -22,9 +22,9 @@
                     <li class="navbar-brand">{{ author }}</li>
                 </ul>
 
-                <form class="navbar-form navbar-left" method="POST">
+                <form class="navbar-form navbar-left" method="post">
                     <div class="form-group">
-                        <a href="/blog?author={{ author }}" role="button" class="form-control no-dec">Home</a>
+                        <a href="/home/{{ author }}" role="button" class="form-control no-dec">Home</a>
                     </div>
                 </form>
             </div>
@@ -72,9 +72,17 @@
 
         <div class="row">
             <div class="col-xs-12 text-left">
-                <input type="submit" name="newpost-opt" value="Create" class="rspace">
-                <input type="submit" name="newpost-opt" value="Cancel">
+                <form method="post">
+                    <input type="submit" name="create" value="Create" class="rspace">
+                </form>
+                <a href="/home/{{ author }}" class="no-dec">
+                    <input type="button" value="Cancel">
+                </a>
+                
+                <!-- <input type="submit" name="newpost-opt" value="Cancel"> -->
             </div>
+            
+            
         </div>
     </form>
 </div>

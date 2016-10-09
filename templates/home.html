@@ -22,10 +22,13 @@
                     <li class="navbar-brand">{{ author }}</li>
                 </ul>
 
-                <form class="navbar-form navbar-left" method="post">
+<!--                 <form class="navbar-form navbar-left" method="get" action="/new">
                     <input type="submit" name="newpost" value="New Post" class="form-control">
+                </form> -->
+                <form class="navbar-form navbar-left">
+                    <a href="/new/{{ author }}" role="button" class="form-control no-dec">New Post</a>
                 </form>
-
+                        
                 <form class="navbar-form navbar-right">
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="Search">
@@ -47,7 +50,7 @@
     {% for entry in blog_entries %}
         <div class="row">
             <div class="col-xs-12 col-sm-10 text-left">
-                <h3><a href="/blog/post?author={{ entry['author'] }}&id={{ entry['post_id'] }}">{{ entry["subject"] }}</a></h3>
+                <h3><a href="/post/{{ entry['post_id'] }}">{{ entry["subject"] }}</a></h3>
             </div>
             <div class="col-xs-12 col-sm-2 text-left">
                 <h3 class="entry-date">{{ entry["created"] }}</h3>

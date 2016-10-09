@@ -18,9 +18,11 @@ class PostHandler(BaseHandler):
 
     """
 
-    def render_main(self, post_id, post_error="", get_new_comment = False,
-                    new_comment_error="", update_target="",
-                    update_comment_error=""):
+    def render_main(self, post_id, author,
+                    get_new_comment = False,
+                    new_comment_error="", 
+                    update_target="",
+                    edit_comment_error=""):
         entry = BlogEntry.dict_by_id(int(post_id))
         comments = Comment.by_postid_dict(post_id)
 
@@ -30,18 +32,17 @@ class PostHandler(BaseHandler):
 
         self.render("post.html",
                     account=self.account,
-                    author=self.author,
+                    author=author,
                     entry=entry,
                     comments=comments,
-                    post_error=post_error,
                     get_new_comment=get_new_comment,
                     new_comment_error=new_comment_error,
                     update_target=update_target,
-                    update_comment_error=update_comment_error)
+                    edit_comment_error=edit_comment_error)
 
-    def get(self):
-        post_id = self.request.get("id")
-        self.render_main(post_id=post_id)
+    def get(self, post_id):
+        author = BlogEntry.by_id(int(post_id)).author
+        self.render_main(post_id, author)
 
     def post(self):
         author = self.request.get("author")
@@ -91,7 +92,7 @@ class PostHandler(BaseHandler):
                 self.render_main(
                     post_id,
                     update_target=comment_id,
-                    update_comment_error=
+                    edit_comment_error=
                         "You can only make changes to your own comments.")
 
     def save_comment(self, post_id, author):
@@ -117,7 +118,6 @@ class PostHandler(BaseHandler):
             self.render_main(post_id, update_target=comment_id)
 
         elif action == "Delete":
-            # Delete from Comment datastore.
             Comment.delete_by_id(int(comment_id))
             time.sleep(0.1) # for now
             self.redirect("/blog/post?author=%s&id=%s" % (author, post_id))
@@ -132,7 +132,7 @@ class PostHandler(BaseHandler):
                 self.render_main(
                     post_id=post_id,
                     update_target=comment_id,
-                    update_comment_error="Comments can't be empty!")
+                    edit_comment_error="Comments can't be empty!")
 
         elif action == "Cancel":
             self.redirect("/blog/post?author=%s&id=%s" % (author, post_id))

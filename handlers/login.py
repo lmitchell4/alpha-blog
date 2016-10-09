@@ -30,10 +30,9 @@ class LoginHandler(BaseHandler):
             # Set the secure Cookie for this user and redirect to
             # the user's home page.
             self.set_secure_userid_cookie(user)
-            self.redirect("/blog?author=%s" % user.username)
+            self.redirect("/home/%s" % user.username)
 
         else:
             # Username not found, or invalid password.
-            display_data = dict(username = username,
-                                invalid_error = "Invalid login")
-            self.render("login.html", **display_data)
+            self.render("login.html", username, 
+                        invalid_error = "Invalid login")

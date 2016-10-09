@@ -15,7 +15,6 @@ class SignupHandler(BaseHandler):
     """Handler for the signup page."""
 
     def get(self):
-
         if self.logged_in():
             self.render("error.html", account=self.account)
         else:
@@ -68,7 +67,10 @@ class SignupHandler(BaseHandler):
             # Create new datastore entity, set secure Cookie for this
             # user, and redirect to the user's home page.
             user = UserAccount.create(self.username,
-                                                 self.password,
-                                                 self.email)
+                                      self.password,
+                                      self.email)
             self.set_secure_userid_cookie(user)
-            self.redirect("/blog?author=%s" % user.username)
+            # # self.redirect("/home", user.username)
+            
+            # # self.render("home.html", author = user.username)
+            self.redirect("/home/%s" % user.username)
