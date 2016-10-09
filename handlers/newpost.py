@@ -21,15 +21,17 @@ class NewPostHandler(BaseHandler):
                     error=error)
 
     def get(self, author):
-        # # author = self.request.path.split("/")[2]
-        
+        if not self.logged_in():
+            self.redirect("/login")
+            return
+            
         if self.user_and_author(author):
             self.render_main(author)
-        else:
-            self.render()
 
     def post(self, author):
-        # # author = self.request.path.split("/")[2]
+        if not self.logged_in():
+            self.redirect("/login")
+            return
         
         if self.user_and_author(author):
             subject = self.request.get("subject").strip()

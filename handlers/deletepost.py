@@ -22,9 +22,11 @@ class DeletePostHandler(BaseHandler):
                     subject=subject)
 
     def get(self, post_id):
-        author = BlogEntry.by_id(int(post_id)).author
+        if not self.logged_in():
+            self.redirect("/login")
+            return
         
-        # Make sure the author is the one logged in.
+        author = BlogEntry.by_id(int(post_id)).author
         if self.user_and_author(author):
             # Delete the post and any associated comments.
             blog_entry = BlogEntry.get_by_id(int(post_id))
@@ -34,8 +36,3 @@ class DeletePostHandler(BaseHandler):
             Comment.delete_all_by_postid(post_id)
 
             self.render_main(author, subject)
-
-        # else:
-            # # self.response.write(str(post_id))
-            # # self.redirect("/post/%s" % str(post_id))
-            # self.redirect("/post/%s" % str(post_id))

@@ -34,7 +34,7 @@ app = webapp2.WSGIApplication(
      ("/newcomment/([0-9]+)", NewCommentHandler),
      ("/editcomment/([0-9]+)", EditCommentHandler),
      ("/deletecomment/([0-9]+)", DeleteCommentHandler),
-     ("/rate", RateHandler)
+     ("/rate/([0-9]+)/([a-zA-z]+)", RateHandler)
     ], debug=True)
 
 

@@ -155,11 +155,19 @@ hr {
     display: inline;
 }
 
-.like {
+.liked {
     color: #0078ff;
 }
 
-.dislike {
+.disliked {
+    color: #ff0000;
+}
+
+.like:hover {
+    color: #0078ff;
+}
+
+.dislike:hover {
     color: #ff0000;
 }
 

@@ -1,4 +1,5 @@
 
+// Not currently implemented.
 $(".rating").on("click", function() {
     var rating = this.getAttribute("id");
     var data = "rating=" + rating;
@@ -9,7 +10,7 @@ $(".rating").on("click", function() {
 
     $.ajax({
         type: "POST",
-        url: "/blog/rate",
+        url: "/rate",
         data: data,
         success: function(data) {
             if(data.stat == "ok") {

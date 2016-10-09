@@ -79,13 +79,6 @@ class BaseHandler(webapp2.RequestHandler):
             self.author = author
         else:
             self.author = ""
-            
-        # # # This was relying on the author name being in the url.
-        # # author = self.request.get("author")
-        # # if author:
-            # # self.author = author
-        # # else:
-            # # self.author = ""
 
     def logged_in(self):
         """ Return True if someone is logged in to the site.
@@ -102,7 +95,6 @@ class BaseHandler(webapp2.RequestHandler):
         """ Return True if someone is logged in AND the person logged in
             is the author of the current blog.
         """
-        # # if self.logged_in() and self.account == self.author:
         if self.logged_in() and self.account == author:
             return True
         else:

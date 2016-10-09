@@ -21,14 +21,13 @@
                 <ul class="nav navbar-nav">
                     <li class="navbar-brand">{{ author }}</li>
                 </ul>
-
-<!--                 <form class="navbar-form navbar-left" method="get" action="/new">
-                    <input type="submit" name="newpost" value="New Post" class="form-control">
-                </form> -->
-                <form class="navbar-form navbar-left">
-                    <a href="/new/{{ author }}" role="button" class="form-control no-dec">New Post</a>
-                </form>
-                        
+                
+                {% if account == author %}
+                    <form class="navbar-form navbar-left">
+                        <a href="/new/{{ author }}" role="button" class="form-control no-dec">New Post</a>
+                    </form>
+                {% endif %}
+                
                 <form class="navbar-form navbar-right">
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="Search">
@@ -67,16 +66,19 @@
 
         <div class="row">
             <div class="col-xs-12 col-sm-3 text-left rating-div">
-                <p id="like-{{ entry['post_id'] }}" class="rating {{ entry['like'] }}">
-                    Like:
-                </p>
-                <p class="rspace">{{ entry["likes"] }}</p>
-                <p id="dislike-{{ entry['post_id'] }}" class="rating {{ entry['dislike'] }}">
-                    Dislike:
-                </p>
-                <p>{{ entry["dislikes"] }}</p>
+                {% if entry["like"] or entry["dislike"] %}
+                    <p class="{{ entry['like'] }}d">Like:</p>
+                    <p class="rspace">{{ entry["likes"] }}</p>
+                    <p class="{{ entry['dislike'] }}d">Dislike:</p>
+                    <p>{{ entry["dislikes"] }}</p>        
+                {% else %}
+                    <a href="/rate/{{ entry['post_id'] }}/like" class="like">Like:</a>
+                    <p class="rspace">{{ entry["likes"] }}</p>
+                    <a href="/rate/{{ entry['post_id'] }}/dislike" class="dislike">Dislike:</a>
+                    <p>{{ entry["dislikes"] }}</p>
+                {% endif %}
             </div>
-
+        
             <div class="col-xs-12 col-sm-5 text-left">
                 <h5 id="error-{{ entry['post_id'] }}" class="error flush"></h5>
             </div>

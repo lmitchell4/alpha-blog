@@ -20,15 +20,20 @@ class EditPostHandler(BaseHandler):
                     error=error)
 
     def get(self, post_id):
+        if not self.logged_in():
+            self.redirect("/login")
+            return
+            
         author = BlogEntry.by_id(int(post_id)).author
-
-        # Make sure the author is the one logged in.
         if self.user_and_author(author):
             self.render_main(post_id)
         
     def post(self, post_id):
-        author = BlogEntry.by_id(int(post_id)).author
+        if not self.logged_in():
+            self.redirect("/login")
+            return
         
+        author = BlogEntry.by_id(int(post_id)).author
         if self.user_and_author(author):
             new_subject = self.request.get("subject").strip()
             new_content = self.request.get("content").strip()
@@ -36,7 +41,6 @@ class EditPostHandler(BaseHandler):
             if new_subject and new_content:
                 BlogEntry.update_by_id(int(post_id), new_subject, new_content)
                 self.redirect("/post/%s" % str(post_id))
-
             else:
                 self.render_main(post_id,
                                  error="Non-empty comment, please!")
