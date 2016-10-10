@@ -18,26 +18,17 @@ class PostHandler(BaseHandler):
 
     """
 
-    def render_main(self, post_id, author,
-                    get_new_comment = False,
-                    new_comment_error="", 
-                    update_target="",
-                    edit_comment_error=""):
+    def render_main(self, post_id, author):
         entry = BlogEntry.dict_by_id(int(post_id))
-        comments = Comment.by_postid_dict(post_id)
-
         entry = BlogEntry.add_ratings(entries = [entry],
                                       username = self.account)[0]
+        comments = Comment.by_postid_dict(post_id)
 
         self.render("post.html",
                     account=self.account,
                     author=author,
                     entry=entry,
-                    comments=comments,
-                    get_new_comment=get_new_comment,
-                    new_comment_error=new_comment_error,
-                    update_target=update_target,
-                    edit_comment_error=edit_comment_error)
+                    comments=comments)
 
     def get(self, post_id):
         author = BlogEntry.by_id(int(post_id)).author

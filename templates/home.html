@@ -21,13 +21,11 @@
                 <ul class="nav navbar-nav">
                     <li class="navbar-brand">{{ author }}</li>
                 </ul>
-                
-                {% if account == author %}
-                    <form class="navbar-form navbar-left">
-                        <a href="/new/{{ author }}" role="button" class="form-control no-dec">New Post</a>
-                    </form>
-                {% endif %}
-                
+
+                <form class="navbar-form navbar-left">
+                    <a href="/new/{{ author }}" role="button" class="form-control no-dec">New Post</a>
+                </form>
+
                 <form class="navbar-form navbar-right">
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="Search">
@@ -40,7 +38,7 @@
 
     {% if error_msg is defined %}
         <div class="row">
-            <div class="col-xs-12 text-left">
+            <div class="col-xs-12 text-center">
                 <h5 class="error">{{ error_msg }}</h5>
             </div>
         </div>
@@ -70,7 +68,7 @@
                     <p class="{{ entry['like'] }}d">Like:</p>
                     <p class="rspace">{{ entry["likes"] }}</p>
                     <p class="{{ entry['dislike'] }}d">Dislike:</p>
-                    <p>{{ entry["dislikes"] }}</p>        
+                    <p>{{ entry["dislikes"] }}</p>
                 {% else %}
                     <a href="/rate/{{ entry['post_id'] }}/like" class="like">Like:</a>
                     <p class="rspace">{{ entry["likes"] }}</p>
@@ -78,7 +76,7 @@
                     <p>{{ entry["dislikes"] }}</p>
                 {% endif %}
             </div>
-        
+
             <div class="col-xs-12 col-sm-5 text-left">
                 <h5 id="error-{{ entry['post_id'] }}" class="error flush"></h5>
             </div>

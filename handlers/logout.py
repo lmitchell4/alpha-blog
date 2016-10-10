@@ -11,6 +11,9 @@ class LogoutHandler(BaseHandler):
     """Handler for logging out."""
 
     def get(self):
-        # Clear the Cookie and redirect:
-        self.response.set_cookie("user_id", "", path="/")
-        self.render("logout.html")
+        if self.logged_in():
+            # Clear the Cookie:
+            self.response.set_cookie("user_id", "", path="/")
+            self.render("logout.html")
+        else:
+            self.render("index.html")

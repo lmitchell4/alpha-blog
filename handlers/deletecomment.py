@@ -17,9 +17,11 @@ class DeleteCommentHandler(BaseHandler):
        There is currently no option to undo a deletion.
 
     """
-    
+
     def render_main(self, post_id, target="", error=""):
         entry = BlogEntry.dict_by_id(int(post_id))
+        entry = BlogEntry.add_ratings(entries = [entry],
+                                      username = self.account)[0]
         comments = Comment.by_postid_dict(post_id)
 
         self.render("post.html",
@@ -34,14 +36,21 @@ class DeleteCommentHandler(BaseHandler):
         comment = Comment.by_id(int(comment_id))
         commenter = comment.commenter
         post_id = comment.post_id
-        
+
         # Have to be logged in to do anything comment related.
-        if self.logged_in() and self.account == commenter:
+        if not self.logged_in():
+            self.render_main(
+                post_id,
+                target=comment_id,
+                error="You must be logged in to comment.")
+            return
+
+        if self.account == commenter:
             Comment.delete_by_id(int(comment_id))
             time.sleep(0.1) # for now
             self.redirect("/post/%s" % post_id)
         else:
             self.render_main(
-                post_id, 
+                post_id,
                 target=comment_id,
-                error="You must be logged in to delete your comments.")
+                error="You can only delete your own comments.")

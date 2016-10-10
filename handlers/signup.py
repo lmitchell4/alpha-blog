@@ -70,7 +70,4 @@ class SignupHandler(BaseHandler):
                                       self.password,
                                       self.email)
             self.set_secure_userid_cookie(user)
-            # # self.redirect("/home", user.username)
-            
-            # # self.render("home.html", author = user.username)
             self.redirect("/home/%s" % user.username)

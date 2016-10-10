@@ -90,7 +90,6 @@ class BaseHandler(webapp2.RequestHandler):
         else:
             return False
 
-    # # def user_and_author(self):
     def user_and_author(self, author):
         """ Return True if someone is logged in AND the person logged in
             is the author of the current blog.

@@ -19,6 +19,10 @@ class LoginHandler(BaseHandler):
             self.render("login.html")
 
     def post(self):
+        if self.logged_in():
+            self.render("error.html", account=self.account)
+            return
+
         # Retrieve user data and strip white space from front and back:
         username = self.request.get("username").strip()
         password = self.request.get("password").strip()
@@ -34,5 +38,5 @@ class LoginHandler(BaseHandler):
 
         else:
             # Username not found, or invalid password.
-            self.render("login.html", username, 
+            self.render("login.html", username,
                         invalid_error = "Invalid login")

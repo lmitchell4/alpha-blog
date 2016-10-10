@@ -26,7 +26,7 @@ app = webapp2.WSGIApplication(
      ("/signup", SignupHandler),
      ("/login", LoginHandler),
      ("/logout", LogoutHandler),
-     ("/home/([a-zA-z]+)", UserHomeHandler), 
+     ("/home/([a-zA-z]+)", UserHomeHandler),
      ("/post/([0-9]+)", PostHandler),
      ("/new/([a-zA-z]+)", NewPostHandler),
      ("/edit/([0-9]+)", EditPostHandler),
@@ -36,7 +36,3 @@ app = webapp2.WSGIApplication(
      ("/deletecomment/([0-9]+)", DeleteCommentHandler),
      ("/rate/([0-9]+)/([a-zA-z]+)", RateHandler)
     ], debug=True)
-
-
-# if not logged in, redirect to signup page
-# import time not being handled very cleanly

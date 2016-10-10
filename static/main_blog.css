@@ -209,4 +209,8 @@ p.rating:hover {
     cursor: pointer;
 }
 
+.margin-5 {
+    margin: 5px auto;
+}
+
 /* ------------------- End Individual Post Pages ------------------- */
